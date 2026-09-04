@@ -1,15 +1,24 @@
+import { useState } from 'react';
 import { StyleSheet, View, Text, Image, Pressable, Alert, Platform } from 'react-native';
 
 const FOTO = 'https://picsum.photos/id/1060/600/400';
 
 export default function App() {
+  const [vecesComprado, setVecesComprado] = useState(0);
+
   const comprar = () =>
     Alert.alert(
       'Confirmar compra',
       '¿Querés comprar Auriculares Pro?',
       [
         { text: 'Cancelar', style: 'cancel' },
-        { text: 'Comprar', onPress: () => Alert.alert('¡Gracias!', 'Tu compra fue registrada.') },
+        {
+          text: 'Comprar',
+          onPress: () => {
+            setVecesComprado((prev) => prev + 1);
+            Alert.alert('¡Gracias!', 'Tu compra fue registrada.');
+          },
+        },
       ]
     );
 
@@ -35,6 +44,10 @@ export default function App() {
           >
             <Text style={styles.textoBoton}>Comprar</Text>
           </Pressable>
+
+          <Text style={styles.contador}>
+            Agregado al carrito: {vecesComprado} {vecesComprado === 1 ? 'vez' : 'veces'}
+          </Text>
         </View>
       </View>
     </View>
@@ -103,5 +116,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 15,
+  },
+  contador: {
+    fontSize: 13,
+    color: '#5A6B84',
+    marginTop: 10,
+    textAlign: 'center',
   },
 });
