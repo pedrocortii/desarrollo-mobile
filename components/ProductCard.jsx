@@ -15,8 +15,8 @@ export default function ProductCard({ id, nombre, precio, categoria, imagen }) {
     >
       <Image source={{ uri: imagen }} style={styles.imagen} resizeMode="cover" />
       <View style={styles.info}>
-        <Text style={styles.categoria}>{categoria}</Text>
-        <Text style={styles.nombre}>{nombre}</Text>
+        <Text style={styles.categoria} numberOfLines={1}>{categoria}</Text>
+        <Text style={styles.nombre} numberOfLines={2}>{nombre}</Text>
         <Text style={styles.precio}>$ {precio.toLocaleString('es-AR')}</Text>
       </View>
     </Pressable>

@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "nombre": "Auriculares Bluetooth",
+    "precio": 24990,
+    "categoria": "Audio",
+    "descripcion": "Auriculares inalámbricos con sonido nítido y batería de larga duración.",
+    "imagen": "https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": 2,
+    "nombre": "Smartwatch Pro",
+    "precio": 32990,
+    "categoria": "Tecnología",
+    "descripcion": "Reloj inteligente con monitor de actividad, notificaciones y GPS.",
+    "imagen": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": 3,
+    "nombre": "Cafetera Compacta",
+    "precio": 18990,
+    "categoria": "Hogar",
+    "descripcion": "Cafetera pequeña, práctica y con preparación rápida para cada día.",
+    "imagen": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=900&q=80"
+  },
+    {
+    "id": 4,
+    "nombre": "Mochila Urbana",
+    "precio": 15990,
+    "categoria": "Accesorios",
+    "descripcion": "Mochila resistente y cómoda para trabajo, estudio o viajes cortos.",
+    "imagen": "https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": 5,
+    "nombre": "Zapatillas Running",
+    "precio": 45990,
+    "categoria": "Calzado",
+    "descripcion": "Zapatillas livianas pensadas para entrenar o caminar largas distancias.",
+    "imagen": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": 6,
+    "nombre": "Lámpara de Escritorio",
+    "precio": 12990,
+    "categoria": "Hogar",
+    "descripcion": "Luz LED regulable, ideal para estudiar o trabajar de noche.",
+    "imagen": "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": 7,
+    "nombre": "Teclado Mecánico",
+    "precio": 38990,
+    "categoria": "Tecnología",
+    "descripcion": "Teclado con switches táctiles, ideal para programar o jugar.",
+    "imagen": "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": 8,
+    "nombre": "Botella Térmica",
+    "precio": 9990,
+    "categoria": "Accesorios",
+    "descripcion": "Mantiene la temperatura de tu bebida por varias horas.",
+    "imagen": "https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": 9,
+    "nombre": "Campera Rompeviento",
+    "precio": 29990,
+    "categoria": "Indumentaria",
+    "descripcion": "Liviana, resistente al agua y fácil de guardar en la mochila.",
+    "imagen": "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": 10,
+    "nombre": "Parlante Portátil",
+    "precio": 27990,
+    "categoria": "Audio",
+    "descripcion": "Sonido potente en un formato chico, resistente a salpicaduras.",
+    "imagen": "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=900&q=80"
+  }
+]

@@ -10,6 +10,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import products from '../../data/products.json';
 import { useFavoritos } from '../../context/FavoritosContext';
 
@@ -23,12 +24,12 @@ export default function ProductoDetalle() {
 
   if (!producto) {
     return (
-      <View style={styles.centro}>
+      <SafeAreaView style={styles.centro} edges={['top']}>
         <Text style={styles.noEncontrado}>Producto no encontrado</Text>
         <Pressable style={styles.botonVolver} onPress={() => router.back()}>
           <Text style={styles.textoBotonVolver}>‹ Volver</Text>
         </Pressable>
-      </View>
+      </SafeAreaView>
     );
   }
 
@@ -47,45 +48,47 @@ export default function ProductoDetalle() {
     ]);
 
   return (
-    <ScrollView style={styles.pantalla} contentContainerStyle={styles.contenido}>
-      <Pressable style={styles.botonVolver} onPress={() => router.back()}>
-        <Text style={styles.textoBotonVolver}>‹ Volver</Text>
-      </Pressable>
+    <SafeAreaView style={styles.pantalla} edges={['top']}>
+      <ScrollView contentContainerStyle={styles.contenido}>
+        <Pressable style={styles.botonVolver} onPress={() => router.back()}>
+          <Text style={styles.textoBotonVolver}>‹ Volver</Text>
+        </Pressable>
 
-      <View style={styles.tarjeta}>
-        <Image source={{ uri: producto.imagen }} style={styles.foto} resizeMode="cover" />
-        <View style={styles.cuerpo}>
-          <Text style={styles.categoria}>{producto.categoria}</Text>
-          <Text style={styles.titulo}>{producto.nombre}</Text>
-          <Text style={styles.desc}>{producto.descripcion}</Text>
-          <Text style={styles.precio}>$ {producto.precio.toLocaleString('es-AR')}</Text>
+        <View style={styles.tarjeta}>
+          <Image source={{ uri: producto.imagen }} style={styles.foto} resizeMode="cover" />
+          <View style={styles.cuerpo}>
+            <Text style={styles.categoria}>{producto.categoria}</Text>
+            <Text style={styles.titulo}>{producto.nombre}</Text>
+            <Text style={styles.desc}>{producto.descripcion}</Text>
+            <Text style={styles.precio}>$ {producto.precio.toLocaleString('es-AR')}</Text>
 
-          <Pressable
-            onPress={() => toggleFavorito(producto.id)}
-            style={({ pressed }) => [
-              styles.botonFavorito,
-              favorito && styles.botonFavoritoActivo,
-              pressed && styles.botonPressed,
-            ]}
-          >
-            <Text style={[styles.textoFavorito, favorito && styles.textoFavoritoActivo]}>
-              {favorito ? '★ En favoritos' : '☆ Agregar a favoritos'}
+            <Pressable
+              onPress={() => toggleFavorito(producto.id)}
+              style={({ pressed }) => [
+                styles.botonFavorito,
+                favorito && styles.botonFavoritoActivo,
+                pressed && styles.botonPressed,
+              ]}
+            >
+              <Text style={[styles.textoFavorito, favorito && styles.textoFavoritoActivo]}>
+                {favorito ? '★ En favoritos' : '☆ Agregar a favoritos'}
+              </Text>
+            </Pressable>
+
+            <Pressable
+              onPress={comprar}
+              style={({ pressed }) => [styles.boton, pressed && styles.botonPressedFondo]}
+            >
+              <Text style={styles.textoBoton}>Agregar al carrito</Text>
+            </Pressable>
+
+            <Text style={styles.contador}>
+              En el carrito: {vecesComprado} {vecesComprado === 1 ? 'vez' : 'veces'}
             </Text>
-          </Pressable>
-
-          <Pressable
-            onPress={comprar}
-            style={({ pressed }) => [styles.boton, pressed && styles.botonPressedFondo]}
-          >
-            <Text style={styles.textoBoton}>Agregar al carrito</Text>
-          </Pressable>
-
-          <Text style={styles.contador}>
-            En el carrito: {vecesComprado} {vecesComprado === 1 ? 'vez' : 'veces'}
-          </Text>
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
