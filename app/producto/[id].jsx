@@ -17,7 +17,7 @@ import { useFavoritos } from '../../context/FavoritosContext';
 export default function ProductoDetalle() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
-  const { esFavorito, toggleFavorito } = useFavoritos();
+  const { esFavorito, favoritosCargados, toggleFavorito } = useFavoritos();
   const [vecesComprado, setVecesComprado] = useState(0);
 
   const producto = products.find((item) => item.id === Number(id));
@@ -64,6 +64,7 @@ export default function ProductoDetalle() {
 
             <Pressable
               onPress={() => toggleFavorito(producto.id)}
+              disabled={!favoritosCargados}
               style={({ pressed }) => [
                 styles.botonFavorito,
                 favorito && styles.botonFavoritoActivo,
