@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import {
+  ActivityIndicator,
   Alert,
+  Button,
   Image,
   Platform,
   Pressable,
@@ -11,24 +13,71 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import products from '../../data/products.json';
 import { useFavoritos } from '../../context/FavoritosContext';
+import { fetchProductById } from '../../services/productsApi';
 
 export default function ProductoDetalle() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const { esFavorito, favoritosCargados, toggleFavorito } = useFavoritos();
+  const [producto, setProducto] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [vecesComprado, setVecesComprado] = useState(0);
+  const [reintento, setReintento] = useState(0);
 
-  const producto = products.find((item) => item.id === Number(id));
+  useEffect(() => {
+    let activo = true;
 
-  if (!producto) {
+    const cargarProducto = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const data = await fetchProductById(id);
+        if (activo) {
+          setProducto(data);
+        }
+      } catch (err) {
+        if (activo) {
+          setError(err instanceof Error ? err.message : 'No se pudo cargar el producto.');
+          setProducto(null);
+        }
+      } finally {
+        if (activo) {
+          setLoading(false);
+        }
+      }
+    };
+
+    if (id) {
+      cargarProducto();
+    }
+
+    return () => {
+      activo = false;
+    };
+  }, [id, reintento]);
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.pantalla} edges={['top']}>
+        <View style={styles.centro}>
+          <ActivityIndicator size="large" color="#1B5FA8" />
+          <Text style={styles.textoCarga}>Cargando producto...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (error || !producto) {
     return (
       <SafeAreaView style={styles.centro} edges={['top']}>
-        <Text style={styles.noEncontrado}>Producto no encontrado</Text>
+        <Text style={styles.noEncontrado}>{error || 'Producto no encontrado'}</Text>
         <Pressable style={styles.botonVolver} onPress={() => router.back()}>
           <Text style={styles.textoBotonVolver}>‹ Volver</Text>
         </Pressable>
+        {error ? <Button title="Reintentar" onPress={() => setReintento((actual) => actual + 1)} /> : null}
       </SafeAreaView>
     );
   }
@@ -145,4 +194,5 @@ const styles = StyleSheet.create({
   botonPressedFondo: { backgroundColor: '#0F3D6E', opacity: 0.9, transform: [{ scale: 0.97 }] },
   textoBoton: { color: '#fff', fontWeight: 'bold', fontSize: 15 },
   contador: { fontSize: 13, color: '#5A6B84', marginTop: 10, textAlign: 'center' },
+  textoCarga: { color: '#5A6B84', fontSize: 14 },
 });

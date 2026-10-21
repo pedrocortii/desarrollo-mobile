@@ -70,6 +70,25 @@ export function FavoritosProvider({ children }) {
     );
   };
 
+  const quitarFavorito = (id) => {
+    if (!favoritosCargados) {
+      return;
+    }
+
+    setFavoritos((actual) => actual.filter((favoritoId) => favoritoId !== id));
+  };
+
+  const reordenarFavoritos = (idsOrdenados) => {
+    if (!favoritosCargados) {
+      return;
+    }
+
+    setFavoritos((actual) => {
+      const idsUnicos = [...new Set(idsOrdenados.filter((id) => actual.includes(id)))];
+      return [...idsUnicos, ...actual.filter((id) => !idsUnicos.includes(id))];
+    });
+  };
+
   const esFavorito = (id) => favoritos.includes(id);
 
   const value = useMemo(
@@ -77,6 +96,8 @@ export function FavoritosProvider({ children }) {
       favoritos,
       favoritosCargados,
       toggleFavorito,
+      quitarFavorito,
+      reordenarFavoritos,
       esFavorito,
     }),
     [favoritos, favoritosCargados],

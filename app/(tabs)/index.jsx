@@ -1,9 +1,41 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Button, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ProductCard from '../../components/ProductCard';
-import products from '../../data/products.json';
+import useFetch from '../../hooks/useFetch';
+import { fetchProducts, PRODUCTS_STORAGE_KEY } from '../../services/productsApi';
 
 export default function Catalogo() {
+  const { data: products, loading, error, refetch } = useFetch(fetchProducts, {
+    initialValue: [],
+    cacheKey: PRODUCTS_STORAGE_KEY,
+  });
+
+  const renderError = () => (
+    <View style={styles.errorContainer}>
+      <Text style={styles.errorTexto}>{error}</Text>
+      <Button title="Reintentar" onPress={refetch} />
+    </View>
+  );
+
+  if (loading && products.length === 0) {
+    return (
+      <SafeAreaView style={styles.pantalla} edges={['top']}>
+        <View style={styles.centro}>
+          <ActivityIndicator size="large" color="#1B5FA8" />
+          <Text style={styles.textoCarga}>Cargando productos...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (error && products.length === 0) {
+    return (
+      <SafeAreaView style={styles.pantalla} edges={['top']}>
+        <View style={styles.centro}>{renderError()}</View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.pantalla} edges={['top']}>
       <Text style={styles.titulo}>Catálogo</Text>
@@ -12,6 +44,7 @@ export default function Catalogo() {
         keyExtractor={(item) => String(item.id)}
         renderItem={({ item }) => <ProductCard {...item} />}
         contentContainerStyle={styles.lista}
+        refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} tintColor="#1B5FA8" />}
         ListHeaderComponent={
           <View style={styles.encabezadoLista}>
             <View style={styles.cartel}>
@@ -23,6 +56,12 @@ export default function Catalogo() {
             <Text style={styles.destacados}>Destacados</Text>
           </View>
         }
+        ListEmptyComponent={
+          <View style={styles.vacio}>
+            <Text style={styles.textoVacio}>Todavía no hay productos para mostrar.</Text>
+          </View>
+        }
+        ListFooterComponent={error ? renderError() : null}
       />
     </SafeAreaView>
   );
@@ -38,6 +77,8 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingBottom: 8,
   },
+  centro: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 },
+  textoCarga: { marginTop: 12, color: '#5A6B84', fontSize: 14 },
   lista: { padding: 16, gap: 12 },
   encabezadoLista: { gap: 16 },
   cartel: {
@@ -50,4 +91,8 @@ const styles = StyleSheet.create({
   tituloCartel: { color: '#fff', fontSize: 20, fontWeight: '800' },
   subtituloCartel: { color: '#E5EEF8', fontSize: 13, marginTop: 6 },
   destacados: { color: '#0F3D6E', fontSize: 17, fontWeight: '800' },
+  vacio: { alignItems: 'center', justifyContent: 'center', paddingVertical: 40 },
+  textoVacio: { color: '#5A6B84', fontSize: 14 },
+  errorContainer: { marginTop: 16, padding: 16, borderRadius: 12, backgroundColor: '#FFF1F1', gap: 8 },
+  errorTexto: { color: '#B42318', fontSize: 14, textAlign: 'center' },
 });
