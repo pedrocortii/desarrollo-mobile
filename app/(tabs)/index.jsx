@@ -42,7 +42,7 @@ export default function Catalogo() {
       <FlatList
         data={products}
         keyExtractor={(item) => String(item.id)}
-        renderItem={({ item }) => <ProductCard {...item} />}
+        renderItem={({ item }) => <ProductCard {...item} showFavoriteButton />}
         contentContainerStyle={styles.lista}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} tintColor="#1B5FA8" />}
         ListHeaderComponent={

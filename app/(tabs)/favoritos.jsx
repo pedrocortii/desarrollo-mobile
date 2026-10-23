@@ -50,7 +50,6 @@ export default function Favoritos() {
         <DraggableFlatList
           data={productosFavoritos}
           keyExtractor={(item) => String(item.id)}
-          activationDistance={12}
           onDragEnd={({ data }) => reordenarFavoritos(data.map((item) => item.id))}
           renderItem={({ item, drag, isActive }) => (
             <FavoritoDraggableRow

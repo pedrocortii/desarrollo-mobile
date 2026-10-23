@@ -12,6 +12,7 @@ export default function FavoritoDraggableRow({ item, drag, isActive, onDelete })
     <ScaleDecorator>
       <ReanimatedSwipeable
         ref={swipeableRef}
+        enabled={!isActive}
         friction={2}
         overshootRight={false}
         renderRightActions={() => (
@@ -35,7 +36,7 @@ export default function FavoritoDraggableRow({ item, drag, isActive, onDelete })
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={`Mantener presionado para mover ${item.nombre}`}
-            delayLongPress={350}
+            delayLongPress={500}
             disabled={isActive}
             onLongPress={drag}
             style={styles.asa}
