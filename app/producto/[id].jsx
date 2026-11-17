@@ -13,6 +13,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useCarrito } from '../../context/CarritoContext';
 import { useFavoritos } from '../../context/FavoritosContext';
 import { fetchProductById } from '../../services/productsApi';
 
@@ -20,10 +21,10 @@ export default function ProductoDetalle() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const { esFavorito, favoritosCargados, toggleFavorito } = useFavoritos();
+  const { agregarProducto, cantidadDeProducto, cargando: carritoCargando } = useCarrito();
   const [producto, setProducto] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [vecesComprado, setVecesComprado] = useState(0);
   const [reintento, setReintento] = useState(0);
 
   useEffect(() => {
@@ -83,18 +84,21 @@ export default function ProductoDetalle() {
   }
 
   const favorito = esFavorito(producto.id);
+  const unidadesEnCarrito = cantidadDeProducto(producto.id);
 
-  const comprar = () =>
-    Alert.alert('Confirmar compra', `¿Querés comprar ${producto.nombre}?`, [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Comprar',
-        onPress: () => {
-          setVecesComprado((prev) => prev + 1);
-          Alert.alert('¡Gracias!', 'Tu compra fue registrada.');
-        },
-      },
-    ]);
+  const comprar = () => {
+    const seAgrego = agregarProducto(producto);
+
+    if (!seAgrego) {
+      Alert.alert(
+        'No se pudo agregar',
+        'El carrito todavía se está cargando o el producto no tiene datos válidos. Intentá de nuevo.',
+      );
+      return;
+    }
+
+    Alert.alert('Producto agregado', `${producto.nombre} se agregó al carrito.`);
+  };
 
   return (
     <SafeAreaView style={styles.pantalla} edges={['top']}>
@@ -126,14 +130,26 @@ export default function ProductoDetalle() {
             </Pressable>
 
             <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Agregar producto al carrito"
+              accessibilityState={{ disabled: carritoCargando }}
+              disabled={carritoCargando}
               onPress={comprar}
-              style={({ pressed }) => [styles.boton, pressed && styles.botonPressedFondo]}
+              testID="boton-agregar-carrito"
+              style={({ pressed }) => [
+                styles.boton,
+                carritoCargando && styles.botonDeshabilitado,
+                pressed && !carritoCargando && styles.botonPressedFondo,
+              ]}
             >
-              <Text style={styles.textoBoton}>Agregar al carrito</Text>
+              <Text style={styles.textoBoton}>
+                {carritoCargando ? 'Cargando carrito...' : 'Agregar al carrito'}
+              </Text>
             </Pressable>
 
             <Text style={styles.contador}>
-              En el carrito: {vecesComprado} {vecesComprado === 1 ? 'vez' : 'veces'}
+              En el carrito: {unidadesEnCarrito}{' '}
+              {unidadesEnCarrito === 1 ? 'unidad' : 'unidades'}
             </Text>
           </View>
         </View>
@@ -192,6 +208,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   botonPressedFondo: { backgroundColor: '#0F3D6E', opacity: 0.9, transform: [{ scale: 0.97 }] },
+  botonDeshabilitado: { backgroundColor: '#9DB3CC' },
   textoBoton: { color: '#fff', fontWeight: 'bold', fontSize: 15 },
   contador: { fontSize: 13, color: '#5A6B84', marginTop: 10, textAlign: 'center' },
   textoCarga: { color: '#5A6B84', fontSize: 14 },

@@ -37,7 +37,8 @@
           "cameraPermission": "La app usa la cámara para que tomes una foto de perfil.",
           "microphonePermission": false
         }
-      ]
+      ],
+      "expo-font"
     ]
   }
 }
