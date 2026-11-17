@@ -15,6 +15,7 @@ Documentación de la funcionalidad de carrito y de la actualización de dependen
 
 - `context/CarritoContext.jsx`: estado, acciones, totales y persistencia del carrito.
 - `app/(tabs)/carrito.jsx`: pantalla de carrito.
+- `patches/react-native-draggable-flatlist+4.0.3.patch`: compatibilidad con React Native 0.88.
 - `docs/CARRITO.md`: este documento.
 
 ## 3. Archivos modificados
@@ -22,33 +23,50 @@ Documentación de la funcionalidad de carrito y de la actualización de dependen
 - `app/_layout.jsx`: se agregó `CarritoProvider` dentro de los proveedores existentes.
 - `app/(tabs)/_layout.jsx`: se agregó la pestaña Carrito, su ícono y el indicador de unidades.
 - `app/producto/[id].jsx`: el botón de compra ahora agrega al carrito y muestra la cantidad real.
-- `package.json` y `package-lock.json`: actualización de dependencias compatibles con Expo SDK 57.
+- `package.json` y `package-lock.json`: actualización a Expo SDK 58 y dependencias compatibles.
+- `patches/react-native-draggable-flatlist+4.0.3.patch`: adaptación de la librería a React Native 0.88.
 - `app.json`: se agregó el config plugin `expo-font` requerido por `@expo/vector-icons`.
 
 ## 4. Versiones
 
+Migración de Expo SDK 57 a SDK 58:
+
 | Paquete | Antes | Después |
 | --- | --- | --- |
-| expo | 57.0.31 | 57.0.33 |
-| expo-router | 57.0.29 | 57.0.31 |
-| expo-constants | 57.0.19 (rango) / 57.0.22 instalado | 57.0.24 instalado |
-| expo-image-picker | 57.0.20 | 57.0.21 |
-| expo-linking | 57.0.13 | 57.0.14 |
-| expo-splash-screen | 57.0.10 | 57.0.11 |
-| expo-font | No instalado | 57.0.4 |
-| react | 19.2.3 | 19.2.3 |
-| react-native | 0.86.3 | 0.86.3 |
+| expo | 57.0.33 | 58.0.25 |
+| expo-router | 57.0.31 | 58.0.31 |
+| expo-constants | 57.0.24 | 58.0.16 |
+| expo-crypto | 57.0.4 | 58.0.8 |
+| expo-file-system | 57.0.7 | 58.0.13 |
+| expo-font | 57.0.4 | 58.0.12 |
+| expo-image-picker | 57.0.21 | 58.0.10 |
+| expo-linking | 57.0.14 | 58.0.17 |
+| expo-splash-screen | 57.0.11 | 58.0.14 |
+| expo-status-bar | 57.0.1 | 58.0.5 |
+| react | 19.2.3 | 19.3.0 |
+| react-dom | 19.2.3 | 19.3.0 |
+| react-native | 0.86.3 | 0.88.1 |
+| react-native-gesture-handler | 2.32.0 | 3.3.0 |
+| react-native-reanimated | 4.5.1 | 4.7.1 |
+| react-native-safe-area-context | 5.7.0 | 5.11.1 |
+| react-native-screens | 4.26.2 | 4.30.1 |
+| react-native-worklets | 0.10.1 | 0.13.0 |
+| react-native-web | 0.21.2 | 0.21.2 |
 | @react-native-async-storage/async-storage | 2.2.0 | 2.2.0 |
-| react-native-gesture-handler | 2.32.0 | 2.32.0 |
-| react-native-reanimated | 4.5.1 | 4.5.1 |
-| react-native-safe-area-context | 5.7.0 | 5.7.0 |
-| react-native-screens | 4.26.0 | 4.26.2 |
+| react-native-draggable-flatlist | 4.0.3 | 4.0.3 (con parche) |
 
-No se actualizó a Expo SDK 58 porque esa versión usa React Native 0.88, elimina
-`InteractionManager` y usa Gesture Handler 3. La pantalla de Favoritos depende de
-`react-native-draggable-flatlist@4.0.3`, que usa `InteractionManager` y la API de
-callbacks de Gesture Handler 2. Actualizar a SDK 58 rompería el reordenamiento de
-favoritos, que es una funcionalidad existente que debía conservarse.
+### Por qué se parchea draggable-flatlist
+
+React Native 0.88 eliminó `InteractionManager` del core. La versión 4.0.3 de
+`react-native-draggable-flatlist` lo usaba para reiniciar el estado cuando cambia
+la lista. El parche reemplaza esa llamada por un `setTimeout(..., 0)`, que cumple
+la misma función de diferir el reinicio después del render.
+
+El parche se guarda en `patches/` y se aplica automáticamente con `patch-package`
+en el `postinstall` de `package.json`. Así, cualquier persona que ejecute
+`npm install` obtiene la librería corregida sin pasos manuales.
+
+Con SDK 58 la aplicación vuelve a ser compatible con la versión actual de Expo Go.
 
 ## 5. CarritoContext
 
@@ -130,8 +148,8 @@ el carrito. La interfaz no usa precios escritos a mano.
 Comandos ejecutados:
 
 ```bash
+npm install
 npx expo install --fix
-npx expo install expo-font
 npx expo install --check
 npx expo-doctor
 npx expo export --platform android
@@ -140,13 +158,17 @@ npx expo export --platform android
 Resultados:
 
 - `npx expo install --check`: dependencias actualizadas.
-- `npx expo-doctor`: 21/21 verificaciones aprobadas.
+- `npx expo-doctor`: 20/20 verificaciones aprobadas.
 - `npx expo export --platform android`: bundle generado correctamente.
 - Prueba E2E con Chrome sobre la versión web: agregar producto, agregar dos
   veces el mismo producto, agregar productos distintos, incrementar, disminuir,
   eliminar al llegar a cero, eliminar con papelera, vaciar carrito, verificar
   totales, recargar la aplicación y comprobar persistencia, navegar por Perfil,
   Favoritos, Catálogo y Carrito.
+- Prueba táctil de favoritos: mantener presionado el asa, arrastrar el primer
+  favorito al final, comprobar el nuevo orden y verificar que se conserva al
+  recargar y en `AsyncStorage`.
+- Sin errores de consola durante las pruebas.
 
 ## 10. Preguntas para la defensa
 
@@ -201,7 +223,14 @@ npm install
 npx expo start
 ```
 
-Luego escanear el QR con Expo Go o presionar `a` para abrir Android.
+`npm install` ejecuta `patch-package` automáticamente y aplica el parche de
+`draggable-flatlist`. Si se instaló con `--ignore-scripts`, ejecutar una vez:
+
+```bash
+npx patch-package
+```
+
+Luego escanear el QR con **Expo Go para SDK 58** o presionar `a` para abrir Android.
 
 Para verificar la instalación:
 
